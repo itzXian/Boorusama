@@ -5,9 +5,6 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        abi: [arm64, armeabi-v7a, x86_64 ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,11 +32,24 @@ jobs:
           keyAlias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEY_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-      - name: Upload a build artifact
+
+  upload:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        abi: [arm64, armeabi-v7a, x86_64 ]
+    steps:
+      - name: Upload ${{ matrix.abi }} build artifact
         uses: actions/upload-artifact@main
         with:
           name: ${{ matrix.abi }}
           path: build/app/outputs/flutter-apk/*${{ matrix.abi }}*signed.apk
+
+  file-listing:
+    runs-on: ubuntu-latest
+    needs: upload
+    if: always()
+    steps:
       - name: List files
-        if: always()
         run: tree
