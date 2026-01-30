@@ -35,5 +35,5 @@ jobs:
         with:
           path: build/app/outputs/flutter-apk/*signed.apk
       - name: List files
+        if: always()
         run: tree
-          
