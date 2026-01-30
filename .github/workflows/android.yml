@@ -29,6 +29,7 @@ jobs:
           signingKey: ${{ secrets.KEYSTORE }}
           keyAlias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEY_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
       - name: Upload a build artifact
         uses: actions/upload-artifact@main
         with:
