@@ -35,4 +35,5 @@ jobs:
         with:
           path: artifacts/*signed.apk
       - name: List files
+        if: always()
         run: tree
