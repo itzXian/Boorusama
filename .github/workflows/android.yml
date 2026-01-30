@@ -13,7 +13,7 @@ jobs:
         uses: bancolombia/flutter-setup-action@main
         with:
           flutter-version: 3.35.7
-          cache: false
+          cache: true
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Build boilerplate code
