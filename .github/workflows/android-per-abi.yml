@@ -1,0 +1,38 @@
+name: build android apk for per abi
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Setup Flutter
+        uses: bancolombia/flutter-setup-action@main
+        with:
+          flutter-version: 3.35.7
+          cache: false
+      - name: Install Flutter dependencies
+        run: flutter pub get
+      - name: Build boilerplate code
+        run: ./gen.sh
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@main
+      - name: Build apk
+        run: flutter build apk --split-per-abi
+      - name: Sign APK
+        uses: NoCrypt/sign-android@main
+        with:
+          releaseDir: build/app/outputs/flutter-apk/
+          signingKey: ${{ secrets.KEYSTORE }}
+          keyAlias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Upload a build artifact
+        uses: actions/upload-artifact@main
+        with:
+          path: build/app/outputs/flutter-apk/*.apk
+      - name: List files
+        run: tree
+          
