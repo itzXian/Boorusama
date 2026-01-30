@@ -25,8 +25,9 @@ jobs:
       - name: Upload a build artifact
         uses: actions/upload-artifact@main
         with:
-          path:
+          path: |
             build/app/outputs/*.apk
             artifacts/*.apk
+            **/**.apk
       - name: List files
-        uses: gacts/directory-listing@main
+        run: tree
