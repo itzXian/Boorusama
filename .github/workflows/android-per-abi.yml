@@ -5,6 +5,9 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        abi: [arm64, armeabi-v7a, x86_64 ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,7 +38,8 @@ jobs:
       - name: Upload a build artifact
         uses: actions/upload-artifact@main
         with:
-          path: build/app/outputs/flutter-apk/*signed.apk
+          name: ${{ matrix.abi }}
+          path: build/app/outputs/flutter-apk/*${{ matrix.abi }}*signed.apk
       - name: List files
         if: always()
         run: tree
