@@ -22,8 +22,13 @@ jobs:
         uses: gradle/actions/setup-gradle@main
       - name: Build apk
         run: ./build.sh apk --flavor dev
+      - name: List files
+        run: |
+          yes | apt install tree
+          tree
       - name: Upload a build artifact
         uses: actions/upload-artifact@main
         with:
           path:
-            build/app/outputs/.*.apk
+            build/app/outputs/*.apk
+            artifacts/*.apk
