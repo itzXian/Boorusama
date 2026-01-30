@@ -26,7 +26,8 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           path: |
-            build/app/outputs/*.apk
+            app/outputs/apk/dev/release/*.apk
+            app/outputs/flutter-apk/*.apk
             artifacts/*.apk
             **/**.apk
       - name: List files
