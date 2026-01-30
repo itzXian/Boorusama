@@ -21,14 +21,24 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@main
       - name: Build apk
-        run: ./build.sh apk --flavor dev
+        env:
+          KEYSTORE_PASS:
+        run: |
+          ./build.sh apk --flavor dev
+      - name: Sign APK
+        uses: NoCrypt/sign-android@main
+        with:
+          releaseDir: artifacts/
+          signingKey: ${{ secrets.KEYSTORE }}
+          keyAlias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_PASSWORD }}
       - name: Upload a build artifact
         uses: actions/upload-artifact@main
         with:
           path: |
-            app/outputs/apk/dev/release/*.apk
-            app/outputs/flutter-apk/*.apk
+            #app/outputs/apk/dev/release/*.apk
+            #app/outputs/flutter-apk/*.apk
             artifacts/*.apk
-            **/**.apk
+            #**/**.apk
       - name: List files
         run: tree
