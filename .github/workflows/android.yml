@@ -25,7 +25,7 @@ jobs:
       - name: Sign APK
         uses: NoCrypt/sign-android@main
         with:
-          releaseDir: artifacts/
+          releaseDir: artifacts
           signingKey: ${{ secrets.KEYSTORE }}
           keyAlias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEY_PASSWORD }}
