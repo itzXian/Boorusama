@@ -15,7 +15,7 @@ jobs:
         run: |
           flutter pub get
           ./gen.sh
-          ./build.sh apk --flavor prod
+          ./build.sh apk --flavor dev
       - name: Upload a build artifact
         uses: actions/upload-artifact@main
         with:
