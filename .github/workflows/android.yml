@@ -1,0 +1,23 @@
+name: android
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Flutter action
+        uses: subosito/flutter-action@master
+      - name: Install Flutter dependencies
+        run: |
+          flutter pub get
+          ./gen.sh
+          ./build.sh apk --flavor prod
+      - name: Upload a build artifact
+        uses: actions/upload-artifact@master
+        with:
+          path:
+            build/app/outputs/.*.apk
