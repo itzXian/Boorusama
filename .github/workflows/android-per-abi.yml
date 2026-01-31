@@ -32,24 +32,21 @@ jobs:
           keyAlias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEY_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-  upload:
-    runs-on: ubuntu-latest
-    needs: build
-    strategy:
-      matrix:
-        abi: [arm64, armeabi-v7a, x86_64 ]
-    steps:
-      - name: Upload ${{ matrix.abi }} build artifact
+      - name: Upload arm64 build artifact
         uses: actions/upload-artifact@main
         with:
-          name: ${{ matrix.abi }}
-          path: build/app/outputs/flutter-apk/*${{ matrix.abi }}*signed.apk
-
-  file-listing:
-    runs-on: ubuntu-latest
-    needs: upload
-    if: always()
-    steps:
+          name: arm64
+          path: build/app/outputs/flutter-apk/*arm64*signed.apk
+      - name: Upload armeabi-v7a build artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: armeabi-v7a
+          path: build/app/outputs/flutter-apk/*armeabi-v7a*signed.apk
+      - name: Upload x86_64 build artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: x86_64
+          path: build/app/outputs/flutter-apk/*x86_64*signed.apk
       - name: List files
+        if: always()
         run: tree
