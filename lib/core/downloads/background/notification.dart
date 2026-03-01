@@ -30,7 +30,9 @@ class DownloadNotifications {
       ),
     );
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+      settings: initializationSettings,
+    );
 
     final notif = DownloadNotifications._(flutterLocalNotificationsPlugin);
 
@@ -80,10 +82,10 @@ class DownloadNotifications {
     );
 
     await _flutterLocalNotificationsPlugin?.show(
-      'complete_${filename.hashCode}'.hashCode,
-      title,
-      body,
-      platformChannelSpecifics,
+      id: 'complete_${filename.hashCode}'.hashCode,
+      title: title,
+      body: body,
+      notificationDetails: platformChannelSpecifics,
     );
   }
 
@@ -112,10 +114,10 @@ class DownloadNotifications {
     );
 
     await _flutterLocalNotificationsPlugin?.show(
-      'error_${filename.hashCode}'.hashCode,
-      title,
-      body,
-      platformChannelSpecifics,
+      id: 'error_${filename.hashCode}'.hashCode,
+      title: title,
+      body: body,
+      notificationDetails: platformChannelSpecifics,
     );
   }
 }
