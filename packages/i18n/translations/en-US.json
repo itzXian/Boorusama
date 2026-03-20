@@ -748,7 +748,17 @@
     "group_item_counter": {
       "one": "$n post",
       "other": "$n posts"
-    }
+    },
+    "confirm_edit_title": "Review changes",
+    "confirm_edit_adding": {
+      "one": "$n new post will be added",
+      "other": "$n new posts will be added"
+    },
+    "confirm_edit_removing": {
+      "one": "$n post will be removed",
+      "other": "$n posts will be removed"
+    },
+    "invalid_post_ids": "Contains invalid IDs: {0}"
   },
   "favorite_tags": {
     "favorites": "Favorites",
@@ -1117,7 +1127,10 @@
     "login_required": "You need to provide login details to use this feature.",
     "logged_in": "Logged in",
     "relogin": "Re-login",
-    "clear_credentials": "Clear"
+    "clear_credentials": "Clear",
+    "login": "Log in",
+    "login_expires": "Login expires:",
+    "session_expired": "Your session has expired. Please log in again to continue using authenticated features."
   },
   "captcha": {
     "title": "Solve the captcha",
@@ -1275,6 +1288,19 @@
     "extension": {
       "title": "Extensions",
       "failed_to_fetch": "Cannot fetch extension list for this instance"
+    }
+  },
+  "eshuushuu": {
+    "personal_info": {
+      "title": "Personal Information",
+      "gender": "Gender",
+      "location": "Location",
+      "interests": "Interests",
+      "website": "Website"
+    },
+    "profile": {
+      "joined": "Joined",
+      "last_active": "Last active"
     }
   }
 }

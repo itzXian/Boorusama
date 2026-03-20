@@ -1,14 +1,20 @@
 // Package imports:
 import 'package:booru_clients/eshuushuu.dart';
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
+import '../../core/configs/config/data.dart';
 import '../../core/configs/config/types.dart';
+import '../../core/configs/manage/providers.dart';
+import '../../core/router.dart';
 import '../../core/ddos/handler/providers.dart';
 import '../../core/http/client/providers.dart';
 import '../../core/http/client/types.dart';
 import '../../foundation/loggers.dart';
+import 'auth/auth_interceptor.dart';
+import 'auth/session_expired_dialog.dart';
 
 final eshuushuuClientProvider =
     Provider.family<EShuushuuClient, BooruConfigAuth>(
@@ -28,6 +34,8 @@ final eshuushuuDioProvider = Provider.family<Dio, BooruConfigAuth>((
   final ddosProtectionHandler = ref.watch(httpDdosProtectionBypassProvider);
   final loggerService = ref.watch(loggerProvider);
 
+  final refreshToken = config.apiKey;
+
   return newDio(
     options: DioOptions(
       ddosProtectionHandler: ddosProtectionHandler,
@@ -40,7 +48,6 @@ final eshuushuuDioProvider = Provider.family<Dio, BooruConfigAuth>((
       proxySettings: config.proxySettings,
     ),
     additionalInterceptors: [
-      // Conservative rate limiting
       SlidingWindowRateLimitInterceptor(
         config: const SlidingWindowRateLimitConfig(
           requestsPerWindow: 30,
@@ -48,6 +55,59 @@ final eshuushuuDioProvider = Provider.family<Dio, BooruConfigAuth>((
           maxDelayMs: 10000,
         ),
       ),
+      if (refreshToken != null && refreshToken.isNotEmpty)
+        createEshuushuuAuthInterceptor(
+          refreshToken: refreshToken,
+          baseUrl: config.url,
+          onLog: (message) => loggerService.info('Auth', message),
+          onAuthFailed: () {
+            showSessionExpiredDialog(
+              onReLogin: () {
+                final currentConfig = ref
+                    .read(booruConfigProvider)
+                    .firstWhereOrNull(
+                      (c) => c.url == config.url && c.login == config.login,
+                    );
+                if (currentConfig != null) {
+                  ref
+                      .read(routerProvider)
+                      .push(
+                        Uri(
+                          path: '/boorus/${currentConfig.id}/update',
+                          queryParameters: {'q': 'auth'},
+                        ).toString(),
+                      );
+                }
+              },
+            );
+          },
+          onTokenRefreshed: (tokens) {
+            final currentConfig = ref
+                .read(booruConfigProvider)
+                .firstWhereOrNull(
+                  (c) => c.url == config.url && c.login == config.login,
+                );
+            if (currentConfig != null) {
+              loggerService.info(
+                'Auth',
+                'Persisting rotated refresh token for config ${currentConfig.id}',
+              );
+              ref
+                  .read(booruConfigRepoProvider)
+                  .update(
+                    currentConfig.id,
+                    currentConfig
+                        .copyWith(apiKey: tokens.refreshToken)
+                        .toBooruConfigData(),
+                  );
+            } else {
+              loggerService.warn(
+                'Auth',
+                'Could not find config to persist rotated refresh token',
+              );
+            }
+          },
+        ),
     ],
   );
 });
