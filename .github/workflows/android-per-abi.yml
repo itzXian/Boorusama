@@ -14,7 +14,7 @@ jobs:
       - name: Setup Flutter
         uses: bancolombia/flutter-setup-action@main
         with:
-          flutter-version: 3.35.7
+          flutter-version: latest
           cache: true
       - name: Install Flutter dependencies
         run: flutter pub get
