@@ -10,6 +10,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:share_plus/share_plus.dart';
 
 // Project imports:
+import '../../../../foundation/filesystem.dart';
 import '../../../config_widgets/website_logo.dart';
 import '../../../configs/config/types.dart';
 import '../../../downloads/filename/types.dart';
@@ -39,7 +40,8 @@ final _cachedImageFileProvider = FutureProvider.autoDispose
 
         // attach the extension to the file
         final newPath = filePath + effectiveExt;
-        final xFile = fileCopySync(filePath, newPath);
+        final fs = ref.watch(appFileSystemProvider);
+        final xFile = fileCopySync(fs, filePath, newPath);
 
         return xFile;
       },
