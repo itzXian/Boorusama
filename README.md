@@ -24,8 +24,10 @@ Supported imageboards:
 - Danbooru
 - Gelbooru 0.2.5, Gelbooru 0.1, Gelbooru 0.2
 - e621ng
+- e-shushuu
 - Zerochan
 - Moebooru
+- Nozomi.la
 - Shimmie2
 - Sankaku
 - Philomena
@@ -48,8 +50,7 @@ cd Boorusama
 ```
 2. Install dependencies and generate boilerplate code:
 ```bash
-flutter pub get
-./gen.sh
+./init.sh
 ```
 3. Connect to an Android device or emulator and run the app:
 ```bash

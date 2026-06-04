@@ -90,6 +90,7 @@ class SliverRelatedPostsSection<T extends Post> extends ConsumerWidget {
                       aspectRatio: 0.6,
                       imageUrl: imageUrl(post),
                       placeholderUrl: post.thumbnailImageUrl,
+                      placeholderAspectRatio: 0.6,
                       fit: BoxFit.cover,
                     ),
                     Align(
@@ -102,8 +103,8 @@ class SliverRelatedPostsSection<T extends Post> extends ConsumerWidget {
                             (source) => Container(
                               padding: const EdgeInsets.all(4),
                               margin: const EdgeInsets.all(1),
-                              width: 25,
-                              height: 25,
+                              width: 24,
+                              height: 24,
                               decoration: BoxDecoration(
                                 color: context
                                     .extendedColorScheme

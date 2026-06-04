@@ -96,7 +96,7 @@ class BulkDownloadCompletedSessionTile extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             _Logo(
-                              stats: session.stats,
+                              session: session,
                             ),
                             Expanded(
                               child: _InfoText(
@@ -153,7 +153,11 @@ class _CreateSavedTaskButton extends ConsumerWidget {
 
     return CircularIconButton(
       backgroundColor: colorScheme.surfaceContainer,
-      icon: Icon(
+      constraints: const BoxConstraints(
+        minWidth: 32,
+        minHeight: 32,
+      ),
+      icon: FaIcon(
         FontAwesomeIcons.clone,
         size: 18,
         color: colorScheme.onSurfaceVariant,
@@ -212,18 +216,23 @@ class _CoverImage extends ConsumerWidget {
 
 class _Logo extends ConsumerWidget {
   const _Logo({
-    required this.stats,
+    required this.session,
   });
 
-  final DownloadSessionStats stats;
+  final BulkDownloadSession session;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final stats = session.stats;
+
     return stats != DownloadSessionStats.empty
-        ? ConfigAwareWebsiteLogo.fromConfig(
-            ref.watchConfigAuth,
-            width: 18,
-            height: 18,
+        ? Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: ConfigAwareWebsiteLogo(
+              url: session.session.auth.siteUrl,
+              width: 18,
+              height: 18,
+            ),
           )
         : const SizedBox.shrink();
   }

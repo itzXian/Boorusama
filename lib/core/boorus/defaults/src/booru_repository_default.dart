@@ -29,7 +29,6 @@ import '../../../posts/details/types.dart';
 import '../../../posts/details_parts/widgets.dart';
 import '../../../posts/favorites/providers.dart';
 import '../../../posts/favorites/types.dart';
-import '../../../posts/listing/providers.dart';
 import '../../../posts/listing/types.dart';
 import '../../../posts/post/routes.dart';
 import '../../../posts/post/types.dart';
@@ -46,6 +45,7 @@ import '../../../tags/show/routes.dart';
 import '../../../tags/tag/colors.dart';
 import '../../../tags/tag/providers.dart';
 import '../../../tags/tag/types.dart';
+import '../../../text_markup/types.dart';
 import '../../engine/types.dart';
 
 abstract class BooruRepositoryDefault implements BooruRepository {
@@ -139,6 +139,11 @@ abstract class BooruRepositoryDefault implements BooruRepository {
   @override
   CommentRepository comment(BooruConfigAuth config) {
     return ref.watch(emptyCommentRepoProvider);
+  }
+
+  @override
+  TextMarkupRepository? textMarkup(BooruConfigAuth config) {
+    return null;
   }
 
   @override

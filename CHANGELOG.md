@@ -1,3 +1,14 @@
+# Prereleased-2026.05.14
+- Add support for Nozomi
+- [Sankaku] Add favorite support
+- [Suzurubooru] Add pool and comments support
+- [Danbooru] Support displaying comment emojis and wiki content
+- Add last-page jumping for sites that support it
+- Improve Dtext rendering
+- Improve post details copy action with more media and link options
+- Improve Cloudflare/DDOS challenge handling
+- Improve data transfer reliability
+
 # 4.4.0
 - Custom profile icon
 - Instant feedback when favoriting or voting

@@ -21,11 +21,12 @@ if (keystorePropertiesFile.exists()) {
 val hasValidKeystore = keystorePropertiesFile.exists() && 
     keystoreProperties["storeFile"] != null && 
     file(keystoreProperties["storeFile"] as String).exists()
+val splitPerAbi = project.findProperty("split-per-abi") == "true"
 
 android {
     namespace = "com.degenk.boorusama"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -62,7 +63,9 @@ android {
             signingConfig = if (hasValidKeystore) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
             ndk {
                 debugSymbolLevel = "SYMBOL_TABLE"
-                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86_64"))
+                if (!splitPerAbi) {
+                    abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86_64"))
+                }
             }
         }
     }

@@ -1,3 +1,6 @@
+// Dart imports:
+import 'dart:convert';
+
 // Package imports:
 import 'package:dio/dio.dart';
 
@@ -11,6 +14,8 @@ class DioProtectionInterceptor extends Interceptor {
     required Dio dio,
   }) : _protectionHandler = protectionHandler,
        _dio = dio;
+
+  static const _protectionRetryKey = 'boorusama.ddos_protection_retry';
 
   final HttpProtectionHandler _protectionHandler;
   final Dio _dio;
@@ -39,13 +44,20 @@ class DioProtectionInterceptor extends Interceptor {
     Response response,
     ResponseInterceptorHandler handler,
   ) async {
+    if (_isProtectionRetry(response.requestOptions)) {
+      return super.onResponse(response, handler);
+    }
+
     try {
       final isProtection = await _protectionHandler.handleResponse(
         DioResponseAdapter(response),
       );
 
       if (isProtection) {
-        final retryResponse = await _dio.fetch(response.requestOptions);
+        final retryResponse = await _retryAfterProtection(
+          response.requestOptions,
+        );
+        _protectionHandler.resetRetryAttempts(response.requestOptions.uri);
         handler.next(retryResponse);
         return;
       }
@@ -61,11 +73,16 @@ class DioProtectionInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    if (_isProtectionRetry(err.requestOptions)) {
+      return handler.next(err);
+    }
+
     try {
       final solved = await _protectionHandler.handleError(DioErrorAdapter(err));
 
       if (solved) {
-        final response = await _dio.fetch(err.requestOptions);
+        final response = await _retryAfterProtection(err.requestOptions);
+        _protectionHandler.resetRetryAttempts(err.requestOptions.uri);
         handler.resolve(response);
         return;
       }
@@ -74,6 +91,26 @@ class DioProtectionInterceptor extends Interceptor {
     }
 
     return handler.next(err);
+  }
+
+  bool _isProtectionRetry(RequestOptions options) =>
+      options.extra[_protectionRetryKey] == true;
+
+  Future<Response<dynamic>> _retryAfterProtection(
+    RequestOptions options,
+  ) async {
+    final previous = options.extra[_protectionRetryKey];
+    options.extra[_protectionRetryKey] = true;
+
+    try {
+      return await _dio.fetch(options);
+    } finally {
+      if (previous == null) {
+        options.extra.remove(_protectionRetryKey);
+      } else {
+        options.extra[_protectionRetryKey] = previous;
+      }
+    }
   }
 }
 
@@ -85,7 +122,7 @@ class DioResponseAdapter implements HttpResponse {
   @override
   int? get statusCode => _response.statusCode;
   @override
-  dynamic get data => _response.data;
+  dynamic get data => _decodeData(_response.data);
   @override
   Uri get requestUri => _response.requestOptions.uri;
   @override
@@ -103,4 +140,17 @@ class DioErrorAdapter implements HttpError {
   Uri get requestUri => _error.requestOptions.uri;
   @override
   String? get message => _error.message;
+}
+
+dynamic _decodeData(dynamic data) => switch (data) {
+  final List<int> bytes => _tryDecodeBytes(bytes),
+  _ => data,
+};
+
+dynamic _tryDecodeBytes(List<int> bytes) {
+  try {
+    return utf8.decode(bytes);
+  } catch (_) {
+    return bytes;
+  }
 }
