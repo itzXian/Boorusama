@@ -17,7 +17,7 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Build boilerplate code
-        run: ./gen.sh
+        run: ./init.sh
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@main
       - name: Config env
